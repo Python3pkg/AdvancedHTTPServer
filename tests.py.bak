@@ -56,9 +56,9 @@ from advancedhttpserver import random_string
 from advancedhttpserver import resolve_ssl_protocol_version
 
 if sys.version_info[0] < 3:
-	import http.client
+	import httplib
 	http = type('http', (), {'client': httplib})
-	from configparser import ConfigParser
+	from ConfigParser import ConfigParser
 else:
 	import http.client
 	from configparser import ConfigParser

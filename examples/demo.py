@@ -55,13 +55,13 @@ class DemoHandler(RequestHandler):
 		return
 
 	def rpc_xor(self, key, data):
-		return ''.join(map(lambda x: chr(ord(x) ^ key), data))
+		return ''.join([chr(ord(x) ^ key) for x in data])
 
 	def res_exception(self, query):
 		raise Exception('this is an exception, oh noes!')
 
 def main():
-	print("AdvancedHTTPServer version: {0}".format(__version__))
+	print(("AdvancedHTTPServer version: {0}".format(__version__)))
 	logging.getLogger('').setLevel(logging.DEBUG)
 	console_log_handler = logging.StreamHandler()
 	console_log_handler.setLevel(logging.INFO)

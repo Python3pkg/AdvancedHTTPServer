@@ -106,22 +106,22 @@ import threading
 import time
 import traceback
 import unittest
-import urllib.request, urllib.parse, urllib.error
+import urllib
 import zlib
 
 if sys.version_info[0] < 3:
-	import http.server
+	import BaseHTTPServer
 	import cgi as html
-	import http.cookies
-	import http.client
-	import socketserver as socketserver
-	import urllib.parse
+	import Cookie
+	import httplib
+	import SocketServer as socketserver
+	import urlparse
 	http = type('http', (), {'client': httplib, 'cookies': Cookie, 'server': BaseHTTPServer})
 	urllib.parse = urlparse
-	urllib.parse.quote = urllib.parse.quote
-	urllib.parse.unquote = urllib.parse.unquote
-	urllib.parse.urlencode = urllib.parse.urlencode
-	from configparser import ConfigParser
+	urllib.parse.quote = urllib.quote
+	urllib.parse.unquote = urllib.unquote
+	urllib.parse.urlencode = urllib.urlencode
+	from ConfigParser import ConfigParser
 else:
 	import html
 	import http.client
@@ -176,7 +176,7 @@ else:
 	_MSGPACK_EXT_TYPES = {10: 'datetime.datetime', 11: 'datetime.date', 12: 'datetime.time'}
 	def _msgpack_default(obj):
 		obj_type, obj_value = _serialize_ext_dump(obj)
-		obj_type = next(i[0] for i in list(_MSGPACK_EXT_TYPES.items()) if i[1] == obj_type)
+		obj_type = next(i[0] for i in _MSGPACK_EXT_TYPES.items() if i[1] == obj_type)
 		if sys.version_info[0] == 3:
 			obj_value = obj_value.encode('utf-8')
 		return msgpack.ExtType(obj_type, obj_value)
@@ -737,7 +737,7 @@ class RequestHandler(http.server.BaseHTTPRequestHandler, object):
 		"""The dict object which maps regular expressions of RPC functions to their handlers."""
 		for map_name in (None, self.__class__.__name__):
 			handler_map = g_handler_map.get(map_name, {})
-			for path, function_info in list(handler_map.items()):
+			for path, function_info in handler_map.items():
 				function, function_is_rpc = function_info
 				if function_is_rpc:
 					self.rpc_handler_map[path] = function
@@ -772,7 +772,7 @@ class RequestHandler(http.server.BaseHTTPRequestHandler, object):
 	def __get_handler(self, is_rpc=False):
 		handler = None
 		handler_map = (self.rpc_handler_map if is_rpc else self.handler_map)
-		for (path_regex, handler) in list(handler_map.items()):
+		for (path_regex, handler) in handler_map.items():
 			if re.match(path_regex, self.path):
 				break
 		else:
@@ -946,7 +946,7 @@ class RequestHandler(http.server.BaseHTTPRequestHandler, object):
 		original_path = urllib.parse.unquote(self.path)
 		self.path = posixpath.normpath(original_path)
 		words = self.path.split('/')
-		words = [_f for _f in words if _f]
+		words = filter(None, words)
 		tmp_path = ''
 		for word in words:
 			_, word = os.path.splitdrive(word)
@@ -1018,7 +1018,7 @@ class RequestHandler(http.server.BaseHTTPRequestHandler, object):
 		self.send_header('Content-Type', content_type)
 		self.send_header('Content-Length', len(message))
 		if headers is not None:
-			for header, value in list(headers.items()):
+			for header, value in headers.items():
 				self.send_header(header, value)
 		self.end_headers()
 		self.wfile.write(message)
@@ -1162,7 +1162,7 @@ class RequestHandler(http.server.BaseHTTPRequestHandler, object):
 			if content_type.startswith('application/json'):
 				data = json.loads(data)
 				if isinstance(data, dict):
-					self.query_data = dict([(i[0], [i[1]]) for i in list(data.items())])
+					self.query_data = dict([(i[0], [i[1]]) for i in data.items()])
 			else:
 				self.query_data = urllib.parse.parse_qs(data, keep_blank_values=1)
 		except Exception:
@@ -1386,7 +1386,7 @@ class WebSocketHandler(object):
 			length = struct.unpack('>Q', self.handler.rfile.read(8))[0]
 		masks = [b for b in self.handler.rfile.read(4)]
 		if sys.version_info[0] < 3:
-			masks = list(map(ord, masks))
+			masks = map(ord, masks)
 
 		payload = bytearray(self.handler.rfile.read(length))
 		for idx, char in enumerate(payload):

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-#  websockets.py
+#  redirect.py
 #
 #  Redistribution and use in source and binary forms, with or without
 #  modification, are permitted provided that the following conditions are
@@ -30,27 +30,40 @@
 #  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 
+import argparse
+import logging
+import sys
+
 from advancedhttpserver import *
 from advancedhttpserver import __version__
 
-class DemoWebSocketHandler(WebSocketHandler):
-	def on_message_binary(self, message):
-		self.send_message(self._opcode_binary, message)
+class RedirectHandler(RequestHandler):
+	target_url = 'http://127.0.0.1'
+	def install_handlers(self):
+		self.handler_map['.*'] = self.redirect
 
-	def on_message_text(self, message):
-		if len(message) > 64:
-			print((message[:61] + '...'))
-		else:
-			print(message)
-		self.send_message(self._opcode_text, message)
-
-class DemoHandler(RequestHandler):
-	web_socket_handler = DemoWebSocketHandler
+	def redirect(self, query):
+		print(self.path)
+		self.send_response(302)
+		self.send_header('Location', self.target_url)
+		self.end_headers()
+		return
 
 def main():
-	server = build_server_from_argparser(handler_klass=DemoHandler)
-	print(("AdvancedHTTPServer version: {0}".format(__version__)))
-	server.server_version = 'AdvancedHTTPServerDemo'
+	parser = argparse.ArgumentParser(description='AdvancedHTTPServer Redirect', conflict_handler='resolve', version=__version__)
+	parser.add_argument('target_url', help='the url to redirect to')
+	arguments = parser.parse_args()
+
+	RedirectHandler.target_url = arguments.target_url
+	print("AdvancedHTTPServer version: {0}".format(__version__))
+	print('Redirecting to: ' + arguments.target_url)
+	logging.getLogger('').setLevel(logging.DEBUG)
+	console_log_handler = logging.StreamHandler()
+	console_log_handler.setLevel(logging.INFO)
+	console_log_handler.setFormatter(logging.Formatter("%(asctime)s %(levelname)-8s %(message)s"))
+	logging.getLogger('').addHandler(console_log_handler)
+
+	server = AdvancedHTTPServer(RedirectHandler)
 	try:
 		server.serve_forever()
 	except KeyboardInterrupt:

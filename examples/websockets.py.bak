@@ -39,7 +39,7 @@ class DemoWebSocketHandler(WebSocketHandler):
 
 	def on_message_text(self, message):
 		if len(message) > 64:
-			print((message[:61] + '...'))
+			print(message[:61] + '...')
 		else:
 			print(message)
 		self.send_message(self._opcode_text, message)
@@ -49,7 +49,7 @@ class DemoHandler(RequestHandler):
 
 def main():
 	server = build_server_from_argparser(handler_klass=DemoHandler)
-	print(("AdvancedHTTPServer version: {0}".format(__version__)))
+	print("AdvancedHTTPServer version: {0}".format(__version__))
 	server.server_version = 'AdvancedHTTPServerDemo'
 	try:
 		server.serve_forever()

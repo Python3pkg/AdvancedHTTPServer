@@ -43,7 +43,7 @@ class RedirectHandler(RequestHandler):
 		self.handler_map['.*'] = self.redirect
 
 	def redirect(self, query):
-		print(self.path)
+		print((self.path))
 		self.send_response(302)
 		self.send_header('Location', self.target_url)
 		self.end_headers()
@@ -55,8 +55,8 @@ def main():
 	arguments = parser.parse_args()
 
 	RedirectHandler.target_url = arguments.target_url
-	print("AdvancedHTTPServer version: {0}".format(__version__))
-	print('Redirecting to: ' + arguments.target_url)
+	print(("AdvancedHTTPServer version: {0}".format(__version__)))
+	print(('Redirecting to: ' + arguments.target_url))
 	logging.getLogger('').setLevel(logging.DEBUG)
 	console_log_handler = logging.StreamHandler()
 	console_log_handler.setLevel(logging.INFO)

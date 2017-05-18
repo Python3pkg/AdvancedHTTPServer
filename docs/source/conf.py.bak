@@ -189,8 +189,8 @@ latex_elements = {
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
-  ('index', 'AdvancedHTTPServer.tex', 'AdvancedHTTPServer Documentation',
-   'Spencer McIntyre', 'manual'),
+  ('index', 'AdvancedHTTPServer.tex', u'AdvancedHTTPServer Documentation',
+   u'Spencer McIntyre', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -219,8 +219,8 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('index', 'advancedhttpserver', 'AdvancedHTTPServer Documentation',
-     ['Spencer McIntyre'], 1)
+    ('index', 'advancedhttpserver', u'AdvancedHTTPServer Documentation',
+     [u'Spencer McIntyre'], 1)
 ]
 
 # If true, show URL addresses after external links.
@@ -233,8 +233,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-  ('index', 'AdvancedHTTPServer', 'AdvancedHTTPServer Documentation',
-   'Spencer McIntyre', 'AdvancedHTTPServer', 'One line description of project.',
+  ('index', 'AdvancedHTTPServer', u'AdvancedHTTPServer Documentation',
+   u'Spencer McIntyre', 'AdvancedHTTPServer', 'One line description of project.',
    'Miscellaneous'),
 ]
 
